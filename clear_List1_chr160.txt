@@ -1,0 +1,73 @@
+'Attribute VB_Name = "clear_all_sheets_chr160"
+
+Sub clear_all_sheets_chr160()
+
+    Call turn_off_functionalities
+
+    Dim wb As Workbook
+    Dim ws As Worksheet
+    Dim cell As Range
+    Dim arr_ws() As Variant
+    Dim i As Long, j As Long
+    
+    Set wb = ThisWorkbook
+    Set ws = wb.Worksheets("Лист1")
+
+'    For Each ws In wb.Sheets
+        
+        If ws.AutoFilterMode Then
+            If ws.FilterMode Then
+                ws.AutoFilterMode = False
+            Else
+                ws.AutoFilterMode = False
+            End If
+        End If
+    
+        arr_ws = ws.Range("A1").CurrentRegion.Value
+        
+        For i = 2 To UBound(arr_ws, 1)
+            For j = LBound(arr_ws, 2) To UBound(arr_ws, 2)
+                
+                If IsError(arr_ws(i, j)) Then
+                    Exit For
+                End If
+                
+                If InStr(arr_ws(i, j), Chr(160)) Then
+                    arr_ws(i, j) = Trim(Replace(arr_ws(i, j), Chr(160), ""))
+                Else
+                    arr_ws(i, j) = Trim(arr_ws(i, j))
+                End If
+            Next j
+        Next i
+
+        ws.Range("A1").Resize(UBound(arr_ws, 1), UBound(arr_ws, 2)).Value = arr_ws
+        
+        Erase arr_ws
+    
+'    Next ws
+
+    Call turn_on_functionalities
+
+End Sub
+
+'
+Sub turn_off_functionalities()
+
+    With Application
+        .Calculation = xlCalculationManual
+        .EnableEvents = False
+        .ScreenUpdating = False
+    End With
+
+End Sub
+
+'
+Sub turn_on_functionalities()
+
+    With Application
+        .Calculation = xlCalculationAutomatic
+        .EnableEvents = True
+        .ScreenUpdating = True
+    End With
+
+End Sub
